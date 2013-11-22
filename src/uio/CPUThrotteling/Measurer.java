@@ -8,7 +8,7 @@ import java.nio.CharBuffer;
 
 public class Measurer extends Thread
 {
-    int runtime = 5 * 60 * 1000; // 5 minutes
+    int run = 5 * 60 * 1000; // 5 minutes
     int sleeptime = 25 * 1000; // 25 seconds
     int slept = 0;
 
@@ -17,13 +17,13 @@ public class Measurer extends Thread
         int cores = Runtime.getRuntime().availableProcessors();
         StringBuilder string = new StringBuilder();
 
-        while (slept < runtime)
+        while (run > slept)
         {
             string.append("Runtime: " + slept  / 1000 + " seconds\n");
 
-            for(int i = 0; i < cores; i++)
+            for(int core = 0; core < cores; core++)
             {
-
+                getCPUFrequency(core);
             }
 
             try
