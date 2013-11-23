@@ -8,32 +8,29 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.CharBuffer;
 
+import static uio.CPUThrotteling.Configuration.CORES;
+
 
 public class Measurer extends Thread
 {
     // Denotes how long this measurer has slept
     int slept = 0;
 
+
     public void run()
     {
-        int cores = Runtime.getRuntime().availableProcessors();
-        /**
-         * Prints out the state-times for each CPU
-         */
-        for(int core = 0; core < cores; core++)
-            {
-            Log.i("CPU", "CPU states: \n" + getStateTimes(core));
-        }
 
+        getStateTimes();
 
         while (Configuration.RUN > slept)
         {
             StringBuilder string = new StringBuilder();
+
             // Runtime
             string.append(slept  / 1000 + ",");
 
             // CPU-core HZ
-            for(int core = 0; core < cores; core++)
+            for(int core = 0; core < CORES; core++)
                 string.append(getCPUFrequency(core) + ",");
 
             // SOC temperature
@@ -51,14 +48,7 @@ public class Measurer extends Thread
             } catch (InterruptedException e){}
         }
 
-
-        /**
-         * Prints out the state-times for each CPU
-         */
-        for(int core = 0; core < cores; core++)
-        {
-            Log.i("CPU", getStateTimes(core));
-        }
+        getStateTimes();
     }
 
     /**
@@ -89,11 +79,14 @@ public class Measurer extends Thread
      * Returns the current CPU state times.
      * Meaning, it returns information about - how much time the core
      * has been in a specific frequency.
-     * @param core
      * @return
      */
-    String getStateTimes(int core){
-        return exec("cat /sys/devices/system/cpu/cpu" + core + "/cpufreq/stats/time_in_state");
+    void getStateTimes(){
+
+        for(int core = 0; core < CORES; core++)
+        {
+            Log.i("CPU", "CPU states: \n" + exec("cat /sys/devices/system/cpu/cpu" + core + "/cpufreq/stats/time_in_state"));
+        }
     }
 
     /**
