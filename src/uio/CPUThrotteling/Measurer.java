@@ -11,8 +11,7 @@ import java.nio.CharBuffer;
 
 public class Measurer extends Thread
 {
-    int run = 5 * 60 * 1000; // 5 minutes
-    int sleeptime = 1 * 1000; // 25 seconds
+    // Denotes how long this measurer has slept
     int slept = 0;
 
     public void run()
@@ -27,7 +26,7 @@ public class Measurer extends Thread
         }
 
 
-        while (run > slept)
+        while (Configuration.RUN > slept)
         {
             StringBuilder string = new StringBuilder();
             // Runtime
@@ -46,8 +45,8 @@ public class Measurer extends Thread
             // Goes to sleep
             try
             {
-                sleep(sleeptime);
-                slept += sleeptime;
+                sleep(Configuration.INTERVAL);
+                slept += Configuration.INTERVAL;
 
             } catch (InterruptedException e){}
         }
