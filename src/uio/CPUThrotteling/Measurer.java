@@ -42,13 +42,17 @@ public class Measurer extends Thread
      */
     String getCPUFrequency(int core)
     {
-        return exec("cat \"/sys/devices/system/cpu/cpu"+core+"/cpufreq/scaling_cur_freq");
+        return exec("cat \"/sys/devices/system/cpu/cpu" + core + "/cpufreq/scaling_cur_freq");
     }
 
 
     String getCPUTemperature()
     {
        return "";
+    }
+
+    String getStateTimes(int core){
+        return exec("cat \"/sys/devices/system/cpu/cpu" + core + "/cpufreq/stats/time_in_state");
     }
 
     /**
