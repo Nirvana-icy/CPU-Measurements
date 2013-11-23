@@ -10,19 +10,21 @@ import java.nio.CharBuffer;
 import java.util.ArrayList;
 
 import static uio.CPUThrotteling.Configuration.CORES;
+import static uio.CPUThrotteling.Configuration.RUN;
 
 
 public class Measurer extends Thread
 {
     // Denotes how long this measurer has slept
     int slept = 0;
-    private ArrayList<String> log = new ArrayList<String>(512);
+    final long start = System.currentTimeMillis();
+    ArrayList<String> log = new ArrayList<String>(4096);
 
     public void run()
     {
         getStateTimes();
 
-        while (Configuration.RUN > slept)
+        while (keepSampling())
         {
             StringBuilder string = new StringBuilder();
 
@@ -43,13 +45,15 @@ public class Measurer extends Thread
             try
             {
                 sleep(Configuration.INTERVAL);
-                slept += Configuration.INTERVAL;
-
             } catch (InterruptedException e){}
         }
 
         getStateTimes();
         scribble();
+    }
+
+    boolean keepSampling(){
+        return (System.currentTimeMillis() - start) < RUN;
     }
 
     /**
@@ -156,7 +160,7 @@ public class Measurer extends Thread
     }
 
     void log(String content){
-        Log.i("CPU", content);
+        //Log.i("CPU", content);
         this.log.add(content);
     }
 }
