@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.CharBuffer;
+import java.util.ArrayList;
 
 import static uio.CPUThrotteling.Configuration.CORES;
 
@@ -15,11 +16,10 @@ public class Measurer extends Thread
 {
     // Denotes how long this measurer has slept
     int slept = 0;
-
+    private ArrayList<String> log = new ArrayList<String>(512);
 
     public void run()
     {
-
         getStateTimes();
 
         while (Configuration.RUN > slept)
@@ -37,7 +37,7 @@ public class Measurer extends Thread
             string.append(getSOCTemperature());
 
             // Prints out the result
-            Log.i("CPU", string.toString());
+            log( string.toString() + "\n");
 
             // Goes to sleep
             try
@@ -49,6 +49,19 @@ public class Measurer extends Thread
         }
 
         getStateTimes();
+        scribble();
+    }
+
+    /**
+     * Save the log results to file
+     */
+    void scribble()
+    {
+        String content = "";
+        for(String l : log)
+            content += l;
+
+        Writer.write(content);
     }
 
     /**
@@ -81,12 +94,15 @@ public class Measurer extends Thread
      * has been in a specific frequency.
      * @return
      */
-    void getStateTimes(){
-
+    String states = "";
+    void getStateTimes()
+    {
         for(int core = 0; core < CORES; core++)
         {
-            Log.i("CPU", "CPU states: \n" + exec("cat /sys/devices/system/cpu/cpu" + core + "/cpufreq/stats/time_in_state"));
+            states += exec("cat /sys/devices/system/cpu/cpu" + core + "/cpufreq/stats/time_in_state") + "\n";
         }
+
+        log( "CPU states: \n" + states);
     }
 
     /**
@@ -139,4 +155,8 @@ public class Measurer extends Thread
         return container.toString();
     }
 
+    void log(String content){
+        Log.i("CPU", content);
+        this.log.add(content);
+    }
 }

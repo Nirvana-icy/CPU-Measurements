@@ -9,5 +9,8 @@ public class Configuration
     public static final int INTERVAL = 1000; // every n seconds
     // Denotes the amount of cores available to us
     public static final int CORES = Runtime.getRuntime().availableProcessors();
+    // Output filename
+    public static final String FILE = "CPU-Measurement.txt";
+
 
 }
